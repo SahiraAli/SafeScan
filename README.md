@@ -24,7 +24,7 @@ Vulnerability Scanner is a comprehensive tool designed to help you identify and 
 
 1. **Clone the repository**
    ```sh
-   git clone
+   git clone https://github.com/SahiraAli/SafeScan/tree/main
    cd SafeScan
 
 2. **Create a virtual environment and activate it**
