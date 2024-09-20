@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}">
+  <!-- font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+  
+  <title>Vulnerability Scanner</title>
+  <script>
+
+        function validateForm() {
+            const url = document.querySelector('input[name="url"]').value;
+            const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+            if (!urlPattern.test(url)) {
+                alert("Please enter a valid URL.");
+                return false;
+            }
+            return true;
+        }
+
+        function showLoader() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+  </script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-panel">
+      <div class="logo-container">
+          <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Vulnerability Scanner Logo" class="logo">
+          <div class="logo-text">SafeScan</div>
+      </div>
+      <p class="app-description">
+          Welcome to Vulnerability Scanner, a comprehensive tool designed to help you identify and address security vulnerabilities in your web applications. Enter a URL and let our scanner provide detailed insights into potential security issues.
+      </p>
+    </div>
+
+    
+      <div class="right-panel">
+      <h1>Vulnerability Scanner</h1>
+      <div id="form">
+          
+            <form action="/scan" method="post" onsubmit="return validateForm() && showLoader()">
+              <div class="input-container">
+                  <input type="text" id="url-input" name="url" placeholder="Enter URL" required>
+                  <input type="submit" value="Scan">
+              </div>
+          </form>
+      </div>
+      <div id="loading" class="loading-container">
+          <div class="loader"></div>
+          <p>Scanning... Please wait.</p>
+      </div>
+      <div class="footer">
+          <p>&copy; SafeScan</p>
+      </div>
+    </div>
+
+  </div>
+
+
+
+</body>
+</html>

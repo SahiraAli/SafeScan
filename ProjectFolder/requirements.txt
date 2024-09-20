@@ -1,0 +1,19 @@
+open folder and follow commands
+
+pip install virtualenv
+virtualenv env
+
+path you install flask like (<D:\G8 CS Major project\backend>) 
+then use command> .\env\Scripts\activate.bat
+
+pip install Flask
+pip install requests
+pip install beautifulsoup4
+
+
+# run code
+python app.py
+
+
+requests~=2.32.3
+Flask~=3.0.3

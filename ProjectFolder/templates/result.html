@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/result.css')}}">
+    
+    <title>Scan Results</title>
+
+    <script>
+        function showPrecautions() {
+            var precautions = document.getElementById('precautions');
+            if (precautions.style.display === 'none' || precautions.style.display === '') {
+                precautions.style.display = 'block';
+            } else {
+                precautions.style.display = 'none';
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+    <div class="result-container">
+        <div class="result-header">
+            <a href="/" class="back-link">Go Back</a>
+        </div>
+        <h1>Scan Results for {{ url }}</h1>
+        <div class="result-content">
+
+            {% if results %}
+
+            <div class="result-section">
+                <h2>Robots.txt Analysis</h2>
+                {% if results.robots %}
+                    <ul>
+                        {% for path in results.robots %}
+                            <li>{{ path }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No interesting URLs found in robots.txt.</p>
+                {% endif %}
+            </div>
+
+            <div class="result-section">
+                <h2>XSS Vulnerabilities</h2>
+                {% if results.xss %}
+                    {% for url in results.xss %}
+                        <div class="result-item">
+                            <h3>Confirmed</h3>
+                            <p><strong>URL:</strong> {{ url }}</p>
+                            <p><strong>Evidence:</strong> XSS vulnerability found.</p>
+                            <p><strong>Vulnerability description:</strong> The application is vulnerable to Cross-Site Scripting (XSS) attacks.</p>
+                            <p><strong>Risk description:</strong> Attackers can inject malicious scripts into web pages viewed by other users.</p>
+                            <p><strong>Recommendation:</strong> Sanitize user inputs and use Content Security Policy (CSP).</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No XSS vulnerabilities found.</p>
+                {% endif %}
+            </div>
+
+            <div class="result-section">
+                <h2>SQL Injection Vulnerabilities</h2>
+                {% if results.sql %}
+                    {% for url in results.sql %}
+                        <div class="result-item">
+                            <h3>Confirmed</h3>
+                            <p><strong>URL:</strong> {{ url }}</p>
+                            <p><strong>Evidence:</strong> SQL syntax error found in response.</p>
+                            <p><strong>Vulnerability description:</strong> The application is vulnerable to SQL Injection attacks.</p>
+                            <p><strong>Risk description:</strong> Attackers can manipulate SQL queries to access unauthorized data.</p>
+                            <p><strong>Recommendation:</strong> Use parameterized queries and ORM frameworks.</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No SQL injection vulnerabilities found.</p>
+                {% endif %}
+            </div>
+
+            <div class="result-section">
+                <h2>CSRF Vulnerabilities</h2>
+                {% if results.csrf %}
+                    {% for form in results.csrf %}
+                        <div class="result-item">
+                            <h3>Confirmed</h3>
+                            <p><strong>Form without CSRF token:</strong></p>
+                            <pre class="preformatted">{{ form }}</pre>
+                            <p><strong>Vulnerability description:</strong> The form lacks a CSRF token to prevent Cross-Site Request Forgery attacks.</p>
+                            <p><strong>Risk description:</strong> Attackers can perform unauthorized actions on behalf of authenticated users.</p>
+                            <p><strong>Recommendation:</strong> Implement CSRF tokens in forms and validate them on the server side.</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No CSRF vulnerabilities found.</p>
+                {% endif %}
+            </div>
+
+            
+
+            <div class="result-section">
+                <h2>Open Redirect Vulnerabilities</h2>
+                {% if results.open_redirect %}
+                    {% for url in results.open_redirect %}
+                        <div class="result-item">
+                            <h3>Confirmed</h3>
+                            <p><strong>URL:</strong> {{ url }}</p>
+                            <p><strong>Evidence:</strong> Open redirect vulnerability found.</p>
+                            <p><strong>Vulnerability description:</strong> The application is vulnerable to Open Redirect attacks.</p>
+                            <p><strong>Risk description:</strong> Attackers can redirect users to malicious websites.</p>
+                            <p><strong>Recommendation:</strong> Validate and sanitize all redirect URLs.</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No open redirect vulnerabilities found.</p>
+                {% endif %}
+            </div>
+
+            <div class="result-section">
+                <h2>Directory Enumeration Vulnerabilities</h2>
+                {% if results.directory_enumeration %}
+                    {% for url in results.directory_enumeration %}
+                        <div class="result-item">
+                            <h3>Confirmed</h3>
+                            <p><strong>URL:</strong> {{ url }}</p>
+                            <p><strong>Evidence:</strong> Directory enumeration vulnerability found.</p>
+                            <p><strong>Vulnerability description:</strong> The application is vulnerable to Directory Enumeration attacks.</p>
+                            <p><strong>Risk description:</strong> Attackers can discover hidden directories and access sensitive files.</p>
+                            <p><strong>Recommendation:</strong> Restrict access to directories and use proper server configurations.</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No directory enumeration vulnerabilities found.</p>
+                {% endif %}
+            </div>
+
+            <div class="result-section">
+                <h2>Security Headers</h2>
+                {% if results.security_headers %}
+                    {% for header, description in results.security_headers.items() %}
+                        <div class="result-item">
+                            <h3>Missing: {{ header }}</h3>
+                            <p><strong>Description:</strong> {{ description }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>All recommended security headers are present.</p>
+                {% endif %}
+            </div>
+
+            <button class="show-precautions-btn" onclick="showPrecautions()">Show Precautions</button>
+            <div id="precautions" class="precautions-content">
+                <div class="precaution-section">
+                    <h2>Precautions for Missing Security Headers</h2>
+                    {% if results.security_headers %}
+                        {% for header, description in results.security_headers.items() %}
+                            <div class="precaution-item">
+                                <h3>{{ header }}</h3>
+                                <p><strong>Description:</strong> {{ description }}</p>
+                                <p><strong>Recommendation:</strong></p>
+                                {% if header == 'Content-Security-Policy' %}
+                                    <p>Define a Content Security Policy (CSP) that specifies allowed sources for content. Example:</p>
+                                    <pre>Content-Security-Policy: default-src 'self'; script-src 'self' https://apis.google.com</pre>
+                                {% elif header == 'X-Content-Type-Options' %}
+                                    <p>Add the X-Content-Type-Options header to prevent MIME type sniffing. Example:</p>
+                                    <pre>X-Content-Type-Options: nosniff</pre>
+                                {% elif header == 'X-Frame-Options' %}
+                                    <p>Add the X-Frame-Options header to prevent clickjacking. Example:</p>
+                                    <pre>X-Frame-Options: SAMEORIGIN</pre>
+                                {% elif header == 'Strict-Transport-Security' %}
+                                    <p>Add the Strict-Transport-Security header to enforce HTTPS connections. Example:</p>
+                                    <pre>Strict-Transport-Security: max-age=31536000; includeSubDomains</pre>
+                                {% elif header == 'X-XSS-Protection' %}
+                                    <p>Add the X-XSS-Protection header to enable the browser's XSS filter. Example:</p>
+                                    <pre>X-XSS-Protection: 1; mode=block</pre>
+                                {% elif header == 'Referrer-Policy' %}
+                                    <p>Add the Referrer-Policy header to control referrer information. Example:</p>
+                                    <pre>Referrer-Policy: no-referrer</pre>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="result-header">
+                        <a href="/" class="back-link">Go Back</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+
+
+
+        </div>
+    </div>
+
+
+</body>
+</html>
